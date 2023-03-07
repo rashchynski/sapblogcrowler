@@ -99,6 +99,11 @@ while count < limit:
     t1.start()
     threads.append(t1)
 
+for thread in threads:
+    thread.join()
+
+with con:
+    con.executemany(sql, insert_data)
 
 sql = "select title, id from blog where title in ({seq})".format(seq=','.join(['?']*len(insert_data)))
 
