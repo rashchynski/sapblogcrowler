@@ -1,0 +1,11 @@
+<mvc:View controllerName="com.makra.sdnblog.controller.Overview" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:smartchart="sap.ui.comp.smartchart" xmlns:u="sap.ui.unified">
+	<Page id="page" class="sapUiNoMargin" showHeader="false" >
+		<List id="ShortProductList" items="{blogs>/}">
+			<items>
+				<StandardListItem
+					description="{blogs>link}"
+					title="{blogs>title}" />
+			</items>
+		</List>
+	</Page>
+</mvc:View>
