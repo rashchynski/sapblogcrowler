@@ -90,7 +90,7 @@ def load_page(count):
 
 
 count = 0
-limit = count + 20
+limit = count + 10
 threads = []
 
 while count < limit:
@@ -135,23 +135,24 @@ sql = 'INSERT INTO blog2tag (tag_id, blog_id) values(?, ?)'
 with con:
     res = con.executemany(sql, tag2blog)
 
+print("Failed pages:")
+
 print(failed_pages)
 
-print()
+print("Missing tags:")
 
 print(missing_tags)
 
-print()
+print("Statistic loaded:")
 
 for statistic_key in statistic_loaded.keys():
     if statistic_loaded[statistic_key] < 10:
         print( statistic_loaded[statistic_key] )
 
-print()
+print("Statistic added:")
 
 for statistic_key in statistic_added.keys():
     if statistic_added[statistic_key] > 0:
         print( statistic_added[statistic_key] )
-
 
 print()

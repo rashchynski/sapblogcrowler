@@ -1,0 +1,126 @@
+{
+    "d": {
+        "__metadata": {
+            "id": "https://sgsdidhnl002.seagate.com:8101/sap/opu/odata/sap/ZUI_SOOM/SalesOrderItems(SalesOrder='',ItemNumber='0',IsActiveEntity=true)",
+            "uri": "https://sgsdidhnl002.seagate.com:8101/sap/opu/odata/sap/ZUI_SOOM/SalesOrderItems(SalesOrder='',ItemNumber='0',IsActiveEntity=true)",
+            "type": "cds_zui_soom.SalesOrderItemsType"
+        },
+        "cancelItem_ac": false,
+        "checkMaterials_ac": false,
+        "copyLineItems_ac": false,
+        "getMaterialFromStModel_ac": false,
+        "CustomerPartNumber_fc": 0,
+        "OpenQty_fc": 0,
+        "ReqDelvDate_fc": 0,
+        "SeagatePartNumber_fc": 0,
+        "STModelNumber_fc": 0,
+        "WarrantyAppliedfor_fc": 0,
+        "Delete_mc": false,
+        "Update_mc": false,
+        "SalesOrder": "",
+        "ItemNumber": "0",
+        "ShipToCustomerNumber": "",
+        "SoldToCustomerNumber": "",
+        "PONumber": "",
+        "PODate": null,
+        "YourReference": "",
+        "OrderType": "",
+        "SeagatePartNumber": "",
+        "CustomerPartNumber": "",
+        "STModelNumber": "",
+        "UOM": "",
+        "FreightTerm": "",
+        "DeliveryBlock": "",
+        "LineStatusText": "",
+        "OrderQtyUI": "0",
+        "OrderQty": "0.000",
+        "MinOrderQty": "0",
+        "MinQtyMultiples": "0",
+        "CancellationStatus": "",
+        "ShippedQtyUI": "0",
+        "ShippedQty": "0.000",
+        "OpenQty": "0",
+        "Criticality": 0,
+        "Status": "",
+        "Status_Text": "",
+        "HigherLevelItemUI": "0",
+        "ReqDelvDate": null,
+        "SchDelvDate": null,
+        "ProductAvailabilityDate": null,
+        "ItemCategory": "",
+        "DocCondition": "",
+        "SellingPrice": "0.00",
+        "ItemPrice": "0.00",
+        "Tax": "0.00",
+        "Currency": "",
+        "WarrantyItem": "0",
+        "WarrantyMaterial": "",
+        "ServiceUOM": "",
+        "ServiceValue": "",
+        "WarrantyAppliedfor": "",
+        "ItemType": "",
+        "HigherLevelItem": "0",
+        "WarrantyApplied": true,
+        "WarrantyUnitPrice": "0.00",
+        "WarrantyExtPrice": "0.00",
+        "ItemTextUpdated": "",
+        "MaterialUpdatedAsCustomerPart": "",
+        "StatusText": "20",
+        "CreatedBy": "",
+        "createdon": null,
+        "SoldToPartyName": "",
+        "SoldToParty": "",
+        "ShipToParty": "",
+        "ShipToPartyName": "",
+        "Waybill": "",
+        "ConsoldatedShipment": "",
+        "ShippingDoc": "",
+        "InvoiceNo": "",
+        "Paymentterm": "",
+        "UserType": "",
+        "FreightOrders": "",
+        "ShippingDocs": "",
+        "InvoiceNumbers": "",
+        "ConfirmedRequirementQty": "0.000",
+        "HasDraftEntity": false,
+        "DraftEntityCreationDateTime": null,
+        "DraftEntityLastChangeDateTime": null,
+        "HasActiveEntity": false,
+        "IsActiveEntity": true,
+        "DraftAdministrativeData": {
+            "__deferred": {
+                "uri": "https://sgsdidhnl002.seagate.com:8101/sap/opu/odata/sap/ZUI_SOOM/SalesOrderItems(SalesOrder='',ItemNumber='0',IsActiveEntity=true)/DraftAdministrativeData"
+            }
+        },
+        "SiblingEntity": {
+            "__deferred": {
+                "uri": "https://sgsdidhnl002.seagate.com:8101/sap/opu/odata/sap/ZUI_SOOM/SalesOrderItems(SalesOrder='',ItemNumber='0',IsActiveEntity=true)/SiblingEntity"
+            }
+        },
+        "to_header": {
+            "__deferred": {
+                "uri": "https://sgsdidhnl002.seagate.com:8101/sap/opu/odata/sap/ZUI_SOOM/SalesOrderItems(SalesOrder='',ItemNumber='0',IsActiveEntity=true)/to_header"
+            }
+        },
+        "to_invoice": {
+            "__deferred": {
+                "uri": "https://sgsdidhnl002.seagate.com:8101/sap/opu/odata/sap/ZUI_SOOM/SalesOrderItems(SalesOrder='',ItemNumber='0',IsActiveEntity=true)/to_invoice"
+            }
+        },
+        "to_ItemStatus": {
+            "__deferred": {
+                "uri": "https://sgsdidhnl002.seagate.com:8101/sap/opu/odata/sap/ZUI_SOOM/SalesOrderItems(SalesOrder='',ItemNumber='0',IsActiveEntity=true)/to_ItemStatus"
+            }
+        },
+        "to_SchLines": {
+            "__deferred": {
+                "uri": "https://sgsdidhnl002.seagate.com:8101/sap/opu/odata/sap/ZUI_SOOM/SalesOrderItems(SalesOrder='',ItemNumber='0',IsActiveEntity=true)/to_SchLines"
+            }
+        },
+        "to_shipment": {
+            "__deferred": {
+                "uri": "https://sgsdidhnl002.seagate.com:8101/sap/opu/odata/sap/ZUI_SOOM/SalesOrderItems(SalesOrder='',ItemNumber='0',IsActiveEntity=true)/to_shipment"
+            }
+        }
+    }
+}

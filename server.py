@@ -51,13 +51,61 @@ class ListBlogByDate(Resource):
 
         return jsonify( [dict(ix) for ix in data] )
 
+class ListCreate(Resource):
+    def get(self, title):
+        con = sl.connect('sdn.db')
+        sql = 'INSERT INTO list (title) values(?)'
+        with con:
+            con.executemany(sql, [(title)] )
+
+class ListContent(Resource):
+    def get(self, list_id):
+        con = sl.connect('sdn.db')
+        con.row_factory = sqlite3.Row
+        with con:
+            res = con.execute("SELECT * FROM blog inner join where created = ?", [(date)] )
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
+
+class AddToList(Resource):
+    def get(self, blog_id, list_id):
+        con = sl.connect('sdn.db')
+        sql = 'INSERT INTO blog2list (blog_id, list_id) values(?)'
+        with con:
+            con.executemany(sql, [(blog_id, list_id)] )
+
+class RemoveFromList(Resource):
+    def get(self, blog_id, list_id):
+        con = sl.connect('sdn.db')
+        sql = 'INSERT INTO blog2list (blog_id, list_id) values(?)'
+        with con:
+            con.executemany(sql, [(blog_id, list_id)] )
+
+class Lists(Resource):
+    def get(self):
+        con = sl.connect('sdn.db')
+        con.row_factory = sqlite3.Row
+        with con:
+            res = con.execute("SELECT * FROM list")
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
+
 
 api.add_resource(BlogCountByDatePattern, '/blog/created/count/<date_pattern>')
 api.add_resource(ListBlogByDate, '/blog/list/<date>')
 
+api.add_resource(ListCreate, '/list/create/<title>')
+api.add_resource(ListContent, '/list/<list_id>')
+api.add_resource(Lists, '/list')
+
+api.add_resource(AddToList,  '/list/add/<list_id>/<blog_id>')
+api.add_resource(RemoveFromList,  '/list/remove/<id>')
+
 
 if __name__ == '__main__':
-    app.run(host='192.168.86.114', port=5000, debug=True, extra_files=extra_files)
+    app.run(host='127.0.0.1', port=5000, debug=True, extra_files=extra_files)
 
 
 # http://127.0.0.1:5000//blog/created/count/February%201%252023
