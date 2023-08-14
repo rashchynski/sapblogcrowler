@@ -1,0 +1,15 @@
+Mark as read/unread
+Add to favourites
+Add to list
+
+Exclude
+
+Filter by tags / author / title
+Tag cloud
+
+Add comments
+Send to pocket
+Google authorization
+
+Bugs:
+Loading calendar counter
