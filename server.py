@@ -41,6 +41,17 @@ class BlogCountByDatePattern(Resource):
 
         return jsonify( data )
 
+class ListBlogByTag(Resource):
+    def get(self, tag):
+        con = sl.connect('sdn.db')
+        con.row_factory = sqlite3.Row
+        with con:
+            res = con.execute("SELECT * FROM BlogWithTags where tag_id = ? order by id desc", [tag])
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
+
+
 class ListBlogByDate(Resource):
     def get(self, date):
         con = sl.connect('sdn.db')
@@ -50,6 +61,14 @@ class ListBlogByDate(Resource):
             data = res.fetchall()
 
         return jsonify( [dict(ix) for ix in data] )
+
+
+class AddToList(Resource):
+    def get(self, list_id, blog_id):
+        con = sl.connect('sdn.db')
+        sql = 'INSERT INTO blog2list (blog_id, list_id) values(?)'
+        with con:
+            con.executemany(sql, [blog_id, list_id])
 
 class ListCreate(Resource):
     def get(self, title):
@@ -63,24 +82,62 @@ class ListContent(Resource):
         con = sl.connect('sdn.db')
         con.row_factory = sqlite3.Row
         with con:
-            res = con.execute("SELECT * FROM blog inner join where created = ?", [(date)] )
+            res = con.execute("SELECT * FROM BlogsInList where list_id = ?", [list_id])
             data = res.fetchall()
 
         return jsonify( [dict(ix) for ix in data] )
 
-class AddToList(Resource):
-    def get(self, blog_id, list_id):
+class BlogTags(Resource):
+    def get(self, blog_id):
         con = sl.connect('sdn.db')
-        sql = 'INSERT INTO blog2list (blog_id, list_id) values(?)'
+        con.row_factory = sqlite3.Row
         with con:
-            con.executemany(sql, [(blog_id, list_id)] )
+            res = con.execute("SELECT * FROM BlogWithTags where blog_id = ?", [blog_id])
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
+
+
+class Read(Resource):
+    def get(self, list_id, blog_id):
+        con = sl.connect('sdn.db')
+        sql = 'INSERT INTO read (blog_id) values(?)'
+        with con:
+            con.executemany(sql, [(blog_id)] )
+
+class AddToList(Resource):
+    def get(self, list_id, blog_id):
+        con = sl.connect('sdn.db')
+        sql = 'INSERT INTO blog2list (list_id, blog_id) values(?, ?)'
+        with con:
+            con.executemany(sql, [(list_id, blog_id)] )
 
 class RemoveFromList(Resource):
-    def get(self, blog_id, list_id):
+    def get(self, list_id, blog_id):
         con = sl.connect('sdn.db')
-        sql = 'INSERT INTO blog2list (blog_id, list_id) values(?)'
+        sql = 'delete from  blog2list  where list_id = ? and blog_id = ?'
         with con:
-            con.executemany(sql, [(blog_id, list_id)] )
+            con.executemany(sql, [(list_id, blog_id)] )
+
+class Tags(Resource):
+    def get(self):
+        con = sl.connect('sdn.db')
+        con.row_factory = sqlite3.Row
+        with con:
+            res = con.execute("SELECT * FROM countByTag order by title")
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
+
+class Favorites(Resource):
+    def get(self):
+        con = sl.connect('sdn.db')
+        con.row_factory = sqlite3.Row
+        with con:
+            res = con.execute("SELECT * FROM BlogsInList where list_id = 1")
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
 
 class Lists(Resource):
     def get(self):
@@ -93,15 +150,26 @@ class Lists(Resource):
         return jsonify( [dict(ix) for ix in data] )
 
 
-api.add_resource(BlogCountByDatePattern, '/blog/created/count/<date_pattern>')
-api.add_resource(ListBlogByDate, '/blog/list/<date>')
+api.add_resource(BlogCountByDatePattern,    '/blog/created/count/<date_pattern>')
+api.add_resource(ListBlogByDate,            '/blog/list/<date>')
+api.add_resource(ListBlogByTag,             '/blog/list/tag/<tag>')
+api.add_resource(ListCreate,                '/list/create/<title>')
+api.add_resource(ListContent,               '/list/<list_id>')
+api.add_resource(Lists,                     '/list')
+api.add_resource(AddToList,                 '/list/add/<list_id>/<blog_id>')
+api.add_resource(RemoveFromList,             '/list/remove/<list_id>/<blog_id>')
 
-api.add_resource(ListCreate, '/list/create/<title>')
-api.add_resource(ListContent, '/list/<list_id>')
-api.add_resource(Lists, '/list')
+api.add_resource(BlogTags,                 '/blog/tags/<blog_id>')
 
-api.add_resource(AddToList,  '/list/add/<list_id>/<blog_id>')
-api.add_resource(RemoveFromList,  '/list/remove/<id>')
+
+api.add_resource(Read,             '/blog/read/<blog_id>')
+
+api.add_resource(Favorites,                 '/favorites')
+
+api.add_resource(Tags,                      '/tags')
+
+# api.add_resource(AddToList,  '/list/add/<list_id>/<blog_id>')
+# api.add_resource(RemoveFromList,  '/list/remove/<id>')
 
 
 if __name__ == '__main__':

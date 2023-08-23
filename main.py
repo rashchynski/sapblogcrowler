@@ -90,7 +90,7 @@ def load_page(count):
 
 
 count = 0
-limit = count + 10
+limit = count + 100
 threads = []
 
 while count < limit:

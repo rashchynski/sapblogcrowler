@@ -83,7 +83,27 @@
 						"calendar",
 						"list"
 					]
+				},
+				{
+					"name": "bytag",
+					"pattern": "tag/{tag}",
+					"greedy": false,
+					"target": [
+						"calendar",
+						"list"
+					]
+				},
+				{
+					"name": "bylist",
+					"pattern": "list/{list}/{ts}",
+					"greedy": false,
+					"target": [
+						"calendar",
+						"list"
+					]
 				}
+
+
 			],
 			"targets": {
 				"calendar": {

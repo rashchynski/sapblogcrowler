@@ -6,5 +6,21 @@
 				class="sapUiMediumMargin"
 				select="handleCalendarSelect" />
 		</HBox>
+
+		<HBox justifyContent="SpaceAround" width="">
+			<ComboBox 	items="{tags>/}" selectionChange="onTagSelected">
+				<core:Item key="{tags>id}" text="{tags>title}" />
+			</ComboBox>
+		</HBox>
+
+
+		<HBox justifyContent="SpaceAround" width="">
+			<Link text="Read List"  press="onOpenRead" 		 class="sapUiSmallMarginTop"/>
+		</HBox>
+
+		<HBox justifyContent="SpaceAround" width="">
+			<Link text="Favourites" press="onOpenFavourites" class="sapUiSmallMarginTop"/>
+		</HBox>
+
 	</Page>
 </mvc:View>

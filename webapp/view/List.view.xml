@@ -1,14 +1,31 @@
-<mvc:View controllerName="com.makra.sdnblog.controller.Overview" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+<mvc:View controllerName="com.makra.sdnblog.controller.List" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
           xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:smartchart="sap.ui.comp.smartchart"
           xmlns:u="sap.ui.unified">
     <Page id="page" class="sapUiNoMargin" showHeader="false">
         <List id="ShortProductList" items="{blogs>/}">
             <items>
                 <CustomListItem>
-                    <HBox>
-                        <VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
-                            <Link text="{blogs>title}" href="{blogs>link}" target="_blank"/>
-                        </VBox>
+                    <HBox justifyContent="SpaceBetween" alignItems="Center">
+
+                        <HBox alignItems="Center">
+                            <Button icon="sap-icon://delete"    press="onRemoveFromList" class="sapUiSmallMarginBegin" visible="{ui>/inList}"/>
+                            <VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
+
+                                <Link text="{blogs>title}" href="{blogs>link}" target="_blank"/>
+                                <Text text="{blogs>created}"/>
+
+                                <HBox items="{blogs>Tags}" class="sapUiSmallMarginTop">
+                                    <Link text="{blogs>tag_title}" class="sapUiSmallMarginEnd" />
+                                </HBox>
+                            </VBox>
+
+                        </HBox>
+
+                        <HBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
+                            <Link href="https://getpocket.com/save?url={blogs>link}&amp;title={blogs>title}" target="_blank" text="Add to pocket" class="sapUiSmallMarginEnd"/>
+                            <ToggleButton icon="sap-icon://bookmark"        press="onToggleReading"     class="sapUiSmallMarginEnd"/>
+                            <ToggleButton icon="sap-icon://add-favorite"    press="onToggleFavourites"  class="sapUiSmallMarginEnd"/>
+                        </HBox>
                     </HBox>
                 </CustomListItem>
            </items>

@@ -1,15 +1,16 @@
+Transform date to string
+
 Mark as read/unread
-Add to favourites
-Add to list
+Load list in blog
+Refresh button
 
-Exclude
-
-Filter by tags / author / title
-Tag cloud
-
-Add comments
-Send to pocket
-Google authorization
 
 Bugs:
 Loading calendar counter
+
+
+Deploy
+Exclude / Hide
+Filter by tags / author / title
+Tag cloud
+Add comments
