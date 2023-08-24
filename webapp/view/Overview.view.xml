@@ -7,10 +7,10 @@
 				select="handleCalendarSelect" />
 		</HBox>
 
-		<HBox justifyContent="SpaceAround" width="">
-			<ComboBox 	items="{tags>/}" selectionChange="onTagSelected">
-				<core:Item key="{tags>id}" text="{tags>title}" />
-			</ComboBox>
+
+
+		<HBox items="{favLists>/}" class="sapUiSmallMarginTop sapUiLargeMarginBottom" justifyContent="Center">
+			<Link text="{favLists>title}" href="#/tag/{favLists>id}" class="sapUiSmallMarginEnd" press="onNavByTag"/>
 		</HBox>
 
 

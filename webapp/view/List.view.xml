@@ -2,7 +2,13 @@
           xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:smartchart="sap.ui.comp.smartchart"
           xmlns:u="sap.ui.unified">
     <Page id="page" class="sapUiNoMargin" showHeader="false">
-        <List id="ShortProductList" items="{blogs>/}">
+
+        <HBox visible="{ui>/inTag}" alignItems="Center">
+            <ToggleButton icon="sap-icon://add-favorite"    press="onToggleTagFavourites"  class="sapUiSmallMarginEnd" pressed = "{=${ui>/tag/isFavourite} === 1 }"/>
+            <Title text="{ui>/tag/title}" titleStyle="H3" />
+        </HBox>
+
+        <List id="ShortProductList" items="{blogs>/}" >
             <items>
                 <CustomListItem>
                     <HBox justifyContent="SpaceBetween" alignItems="Center">
@@ -11,20 +17,21 @@
                             <Button icon="sap-icon://delete"    press="onRemoveFromList" class="sapUiSmallMarginBegin" visible="{ui>/inList}"/>
                             <VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
 
-                                <Link text="{blogs>title}" href="{blogs>link}" target="_blank"/>
+                                <Link text="{blogs>title}" href="{blogs>link}" target="_blank" press="onMarkAsRead" emphasized="{ path : 'blogs>blog_id', formatter : '.isRead'}"/>
+
                                 <Text text="{blogs>created}"/>
 
                                 <HBox items="{blogs>Tags}" class="sapUiSmallMarginTop">
-                                    <Link text="{blogs>tag_title}" class="sapUiSmallMarginEnd" />
+                                    <Link text="{blogs>tag_title}" href="#/tag/{blogs>tag_id}" class="sapUiSmallMarginEnd" press="onNavByTag"/>
                                 </HBox>
                             </VBox>
 
                         </HBox>
 
                         <HBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
-                            <Link href="https://getpocket.com/save?url={blogs>link}&amp;title={blogs>title}" target="_blank" text="Add to pocket" class="sapUiSmallMarginEnd"/>
-                            <ToggleButton icon="sap-icon://bookmark"        press="onToggleReading"     class="sapUiSmallMarginEnd"/>
-                            <ToggleButton icon="sap-icon://add-favorite"    press="onToggleFavourites"  class="sapUiSmallMarginEnd"/>
+                            <Link href="https://getpocket.com/save?url={blogs>link}&amp;title={blogs>title}" target="_blank" text="Add to pocket" class="sapUiSmallMarginEnd" visible="{=${ui>/list} === '2'}"/>
+                            <ToggleButton icon="sap-icon://bookmark"        press="onToggleReading"     class="sapUiSmallMarginEnd" pressed = "{ path : 'blogs>blog_id', formatter : '.isInRead'}"/>
+                            <ToggleButton icon="sap-icon://add-favorite"    press="onToggleFavourites"  class="sapUiSmallMarginEnd" pressed = "{ path : 'blogs>blog_id', formatter : '.isInFavs'}"/>
                         </HBox>
                     </HBox>
                 </CustomListItem>

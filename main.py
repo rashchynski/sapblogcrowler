@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import sqlite3 as sl
 import threading
+from datetime import datetime
 
 def get_text(a):
     return a.get_text()
@@ -56,6 +57,8 @@ def load_page(count):
 
         created = script_element.find(class_='dm-user__date')
         created = created.contents[2].get_text().strip()
+        created = datetime.strptime(created, "%B %d, %Y").strftime("%Y%m%d")
+
 
         author = script_element.find(class_='dm-user__heading')
         author = author.find('a')

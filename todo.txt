@@ -1,14 +1,13 @@
-Transform date to string
+Search by title
 
-Mark as read/unread
-Load list in blog
+By Tag/List pagination
+Optimize tag load for blogs
+
+
+
 Refresh button
-
-
 Bugs:
 Loading calendar counter
-
-
 Deploy
 Exclude / Hide
 Filter by tags / author / title

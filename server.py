@@ -32,11 +32,10 @@ class Hello(Resource):
         return jsonify({'data': data}), 201
 
 class BlogCountByDatePattern(Resource):
-    def get(self, date_pattern):
+    def get(self, date):
         con = sl.connect('sdn.db')
-        print(date_pattern)
         with con:
-            res = con.execute("SELECT count(*) as __count, created  FROM blog where created like ? group by created  order by __count desc", [(date_pattern)] )
+            res = con.execute("SELECT count(*) as __count, created  FROM blog where created like ? group by created  order by created desc", [(date)] )
             data = res.fetchall()
 
         return jsonify( data )
@@ -46,7 +45,7 @@ class ListBlogByTag(Resource):
         con = sl.connect('sdn.db')
         con.row_factory = sqlite3.Row
         with con:
-            res = con.execute("SELECT * FROM BlogWithTags where tag_id = ? order by id desc", [tag])
+            res = con.execute("SELECT title, created, link, blog_id FROM BlogWithTags where tag_id = ? order by created desc limit 20", [tag])
             data = res.fetchall()
 
         return jsonify( [dict(ix) for ix in data] )
@@ -57,11 +56,41 @@ class ListBlogByDate(Resource):
         con = sl.connect('sdn.db')
         con.row_factory = sqlite3.Row
         with con:
-            res = con.execute("SELECT * FROM blog where created = ?", [(date)] )
+            res = con.execute("SELECT id, title, author, created, likes, comments, link, id as blog_id FROM blog where created = ?", [(date)] )
             data = res.fetchall()
 
         return jsonify( [dict(ix) for ix in data] )
 
+class MarkTagAsFavourite(Resource):
+    def get(self, tag_id):
+        con = sl.connect('sdn.db')
+        sql = 'update tag set isFavourite = 1 where id = ?'
+
+        with con:
+            con.execute(sql, [tag_id])
+
+
+
+
+class FavouriteTags(Resource):
+    def get(self):
+        con = sl.connect('sdn.db')
+        con.row_factory = sqlite3.Row
+        with con:
+            res = con.execute("SELECT * from tag where isFavourite = 1")
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
+
+class Tag(Resource):
+    def get(self, tag_id):
+        con = sl.connect('sdn.db')
+        con.row_factory = sqlite3.Row
+        with con:
+            res = con.execute("SELECT * from tag where id = ?", [(tag_id)] )
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
 
 class AddToList(Resource):
     def get(self, list_id, blog_id):
@@ -144,14 +173,14 @@ class Lists(Resource):
         con = sl.connect('sdn.db')
         con.row_factory = sqlite3.Row
         with con:
-            res = con.execute("SELECT * FROM list")
+            res = con.execute("SELECT * FROM BlogsInList")
             data = res.fetchall()
 
         return jsonify( [dict(ix) for ix in data] )
 
 
-api.add_resource(BlogCountByDatePattern,    '/blog/created/count/<date_pattern>')
-api.add_resource(ListBlogByDate,            '/blog/list/<date>')
+api.add_resource(BlogCountByDatePattern,    '/blog/created/count/<date>')
+api.add_resource(ListBlogByDate,            '/blog/list/date/<date>')
 api.add_resource(ListBlogByTag,             '/blog/list/tag/<tag>')
 api.add_resource(ListCreate,                '/list/create/<title>')
 api.add_resource(ListContent,               '/list/<list_id>')
@@ -161,12 +190,17 @@ api.add_resource(RemoveFromList,             '/list/remove/<list_id>/<blog_id>')
 
 api.add_resource(BlogTags,                 '/blog/tags/<blog_id>')
 
+api.add_resource(MarkTagAsFavourite, '/tag/list/favourite/<tag_id>')
+api.add_resource(FavouriteTags, '/tag/list/favourite')
+
+api.add_resource(Tag, '/tag/<tag_id>')
+
 
 api.add_resource(Read,             '/blog/read/<blog_id>')
 
 api.add_resource(Favorites,                 '/favorites')
 
-api.add_resource(Tags,                      '/tags')
+#api.add_resource(Tags,                      '/tags')
 
 # api.add_resource(AddToList,  '/list/add/<list_id>/<blog_id>')
 # api.add_resource(RemoveFromList,  '/list/remove/<id>')

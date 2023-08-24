@@ -94,6 +94,15 @@
 					]
 				},
 				{
+					"name": "bydate",
+					"pattern": "date/{date}",
+					"greedy": false,
+					"target": [
+						"calendar",
+						"list"
+					]
+				},
+				{
 					"name": "bylist",
 					"pattern": "list/{list}/{ts}",
 					"greedy": false,
