@@ -33,9 +33,11 @@ failed_pages = []
 
 statistic_loaded = {}
 statistic_added = {}
+missing_tag_assignment = {}
 
 def load_page(count):
     try:
+        #page = requests.get('https://blogs.sap.com/tags/7e44126e-7b27-471d-a379-df205a12b1ff/' + str(count) + '/')
         page = requests.get('https://blogs.sap.com/page/' + str(count) + '/')
     except requests.exceptions.RequestException as e:  # This is the correct syntax
         failed_pages.append(count)
@@ -71,7 +73,11 @@ def load_page(count):
         all_tags = script_element.find_all(class_='dm-tags__list-item')
         all_tags = map(get_text, all_tags)
 
+
+
         if title not in existing_blogs:
+            print("New :" + created + " " + title)
+
             statistic_added[count] = statistic_loaded[count] + 1
 
             insert_tag_data[title] = all_tags
@@ -84,6 +90,11 @@ def load_page(count):
                 comments,
                 likes
             ))
+        else:
+            print("Exi :" + created + " " + title)
+            missing_tag_assignment[existing_blogs[title]] = all_tags
+
+
 
     if statistic_loaded[count] < 10:
         print( statistic_loaded[count] )
@@ -93,7 +104,7 @@ def load_page(count):
 
 
 count = 0
-limit = count + 100
+limit = count + 1
 threads = []
 
 while count < limit:
@@ -138,24 +149,26 @@ sql = 'INSERT INTO blog2tag (tag_id, blog_id) values(?, ?)'
 with con:
     res = con.executemany(sql, tag2blog)
 
-print("Failed pages:")
+#print("Failed pages:")
 
-print(failed_pages)
+#print(failed_pages)
 
-print("Missing tags:")
+#print("Missing tags:")
 
-print(missing_tags)
+#print(missing_tags)
 
-print("Statistic loaded:")
+#print("Statistic loaded:")
 
-for statistic_key in statistic_loaded.keys():
-    if statistic_loaded[statistic_key] < 10:
-        print( statistic_loaded[statistic_key] )
+#for statistic_key in statistic_loaded.keys():
+#    if statistic_loaded[statistic_key] < 10:
+#        print( statistic_loaded[statistic_key] )
 
-print("Statistic added:")
+#print("Statistic added:")
 
-for statistic_key in statistic_added.keys():
-    if statistic_added[statistic_key] > 0:
-        print( statistic_added[statistic_key] )
+#for statistic_key in statistic_added.keys():
+#    if statistic_added[statistic_key] > 0:
+#        print( statistic_added[statistic_key] )
 
-print()
+#print()
+
+

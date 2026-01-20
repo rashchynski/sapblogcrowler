@@ -1,15 +1,5 @@
-Search by title
-
-By Tag/List pagination
-Optimize tag load for blogs
-
-
-
-Refresh button
-Bugs:
-Loading calendar counter
-Deploy
-Exclude / Hide
-Filter by tags / author / title
-Tag cloud
-Add comments
+run mainNew
+run sync tags
+run duplicate check
+run syncTitle
+run server

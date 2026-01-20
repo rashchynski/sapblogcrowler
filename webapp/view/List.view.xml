@@ -1,38 +1,66 @@
 <mvc:View controllerName="com.makra.sdnblog.controller.List" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
           xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:smartchart="sap.ui.comp.smartchart"
           xmlns:u="sap.ui.unified">
-    <Page id="page" class="sapUiNoMargin" showHeader="false">
+    <Page id="page" class="sapUiNoMargin" showHeader="false" backgroundDesign="Solid">
+
+
 
         <HBox visible="{ui>/inTag}" alignItems="Center">
-            <ToggleButton icon="sap-icon://add-favorite"    press="onToggleTagFavourites"  class="sapUiSmallMarginEnd" pressed = "{=${ui>/tag/isFavourite} === 1 }"/>
+            <core:Icon
+                    src="sap-icon://favorite"
+                    press="onToggleTagFavourites"  class="size1 sapUiSmallMargin"
+                    color="{= ( ${ui>/tag/isFavourite} === 1 ? 'rgb(57, 136, 193)' : 'rgba(57, 136, 193, 0.3)' ) }" >
+
+            </core:Icon>
+
+            <!--ToggleButton icon="sap-icon://favorite"    press="onToggleTagFavourites"  class="sapUiSizeCozy sapUiSmallMargin" pressed = "{=${ui>/tag/isFavourite} === 1 }"/-->
             <Title text="{ui>/tag/title}" titleStyle="H3" />
         </HBox>
 
-        <List id="ShortProductList" items="{blogs>/}" >
+        <List id="BlogList" items="{blogs>/}" updateStarted ="doLoadMoreData" growing="true">
             <items>
                 <CustomListItem>
                     <HBox justifyContent="SpaceBetween" alignItems="Center">
 
                         <HBox alignItems="Center">
-                            <Button icon="sap-icon://delete"    press="onRemoveFromList" class="sapUiSmallMarginBegin" visible="{ui>/inList}"/>
+                            <!--Button icon="sap-icon://delete"    press="onRemoveFromList" class="sapUiSmallMarginBegin" visible="{ui>/inList}"/>
+
+                            <Text text="{blogs>wordcount}" class="sapUiSmallMarginBegin"/-->
+
                             <VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
+                                <HBox alignItems="Start">
+                                    <Text text="{blogs>created}" class="sapUiTinyMarginEnd"/>
 
-                                <Link text="{blogs>title}" href="{blogs>link}" target="_blank" press="onMarkAsRead" emphasized="{ path : 'blogs>blog_id', formatter : '.isRead'}"/>
+                                    <Link text="{blogs>author}" href="#/author/{blogs>author}" press="onNavByAuthor"/>
+                                </HBox>
 
-                                <Text text="{blogs>created}"/>
+                                <Link text="{blogs>title}" href="{blogs>link}" target="_blank" press="onMarkAsRead" class="blogTitle sapUiSmallMarginBottom"/>
+
+
 
                                 <HBox items="{blogs>Tags}" class="sapUiSmallMarginTop">
-                                    <Link text="{blogs>tag_title}" href="#/tag/{blogs>tag_id}" class="sapUiSmallMarginEnd" press="onNavByTag"/>
+                                    <Link text="{blogs>tag_title}" href="#/tag/{blogs>tag_id}" class="sapUiSmallMarginEnd" press="onNavByTag" emphasized="{ path : 'blogs>tag_id', formatter : '.isTagFavourite'}"/>
                                 </HBox>
                             </VBox>
 
                         </HBox>
 
-                        <HBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
+                        <!--HBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
                             <Link href="https://getpocket.com/save?url={blogs>link}&amp;title={blogs>title}" target="_blank" text="Add to pocket" class="sapUiSmallMarginEnd" visible="{=${ui>/list} === '2'}"/>
-                            <ToggleButton icon="sap-icon://bookmark"        press="onToggleReading"     class="sapUiSmallMarginEnd" pressed = "{ path : 'blogs>blog_id', formatter : '.isInRead'}"/>
-                            <ToggleButton icon="sap-icon://add-favorite"    press="onToggleFavourites"  class="sapUiSmallMarginEnd" pressed = "{ path : 'blogs>blog_id', formatter : '.isInFavs'}"/>
-                        </HBox>
+                            <ToggleButton icon="sap-icon://bookmark"        press="onToggleReading"     class="sapUiSmallMarginEnd" pressed = "{ path : 'blogs>blog_id', formatter : '.isInRead'}" />
+                            <ToggleButton icon="sap-icon://add-favorite"    press="onToggleFavourites"  class="sapUiSmallMarginEnd" pressed = "{ path : 'blogs>blog_id', formatter : '.isInFavs'}" />
+                        </HBox-->
+
+                        <VBox alignItems="Center" class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
+
+                            <core:Icon
+                                    color="{ path : 'blogs>blog_id', formatter : '.isInReadColor'}"
+                                    src="sap-icon://bookmark"        press="onToggleReading"     class="size1 sapUiTinyMargin"/>
+                            <core:Icon
+                                    color="{ path : 'blogs>blog_id', formatter : '.isInFavsColor'}"
+                                    src="sap-icon://favorite"    press="onToggleFavourites"  class="size1 sapUiTinyMargin"/>
+                        </VBox>
+
                     </HBox>
                 </CustomListItem>
            </items>

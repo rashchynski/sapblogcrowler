@@ -1,24 +1,39 @@
-<mvc:View controllerName="com.makra.sdnblog.controller.Overview" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:smartchart="sap.ui.comp.smartchart" xmlns:u="sap.ui.unified">
-	<Page id="page" class="sapUiNoMargin" showHeader="false" >
-		<HBox justifyContent="SpaceAround" width="">
-			<u:Calendar
-				id="calendar"
-				class="sapUiMediumMargin"
-				select="handleCalendarSelect" />
+<mvc:View controllerName="com.makra.sdnblog.controller.Overview" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:smartchart="sap.ui.comp.smartchart"
+		  xmlns:u="sap.ui.unified"
+		  xmlns:calendar="sap.ui.unified.calendar"
+>
+	<Page id="page" class="sapUiNoMargin" showHeader="false" backgroundDesign="Solid">
+		<HBox justifyContent="SpaceAround" alignItems="Center" width="" class="sapUiSmallMarginTop">
+			<!--u:Calendar
+					id="calendar"
+					select="handleCalendarSelect" /-->
+
+			<Button icon="sap-icon://navigation-left-arrow" press="navPrev"/>
+			<VBox alignItems="Center">
+				<Text text="{/CurrentMonthTitle}"/>
+				<core:HTML content="&lt;div id=&quot;cal-heatmap&quot;&gt;&lt;/div&gt;"/>
+			</VBox>
+			<Button icon="sap-icon://navigation-right-arrow" press="navNext"/>
+
 		</HBox>
 
 
+		<HBox class="sapUiSmallMarginTop sapUiLargeMarginBottom" justifyContent="Center">
+			<Input change="onSearch" />
+		</HBox>
 
-		<HBox items="{favLists>/}" class="sapUiSmallMarginTop sapUiLargeMarginBottom" justifyContent="Center">
+
+		<HBox items="{favLists>/}" class="sapUiSmallMarginTop sapUiLargeMarginBottom" justifyContent="Center" wrap="Wrap">
 			<Link text="{favLists>title}" href="#/tag/{favLists>id}" class="sapUiSmallMarginEnd" press="onNavByTag"/>
 		</HBox>
 
 
-		<HBox justifyContent="SpaceAround" width="">
+		<HBox justifyContent="Center" width="40rem" alignItems="Baseline">
+			<core:Icon src="sap-icon://multiselect-none" press="onPurgeList"     class="size1 sapUiTinyMargin" tooltp="Purge Read List"/>
 			<Link text="Read List"  press="onOpenRead" 		 class="sapUiSmallMarginTop"/>
 		</HBox>
 
-		<HBox justifyContent="SpaceAround" width="">
+		<HBox justifyContent="Center" width="40rem">
 			<Link text="Favourites" press="onOpenFavourites" class="sapUiSmallMarginTop"/>
 		</HBox>
 

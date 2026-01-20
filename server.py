@@ -45,7 +45,7 @@ class ListBlogByTag(Resource):
         con = sl.connect('sdn.db')
         con.row_factory = sqlite3.Row
         with con:
-            res = con.execute("SELECT title, created, link, blog_id FROM BlogWithTags where tag_id = ? order by created desc limit 20", [tag])
+            res = con.execute("SELECT title, created, author, link, blog_id FROM BlogWithTags where tag_id = ? order by created desc limit 200", [tag])
             data = res.fetchall()
 
         return jsonify( [dict(ix) for ix in data] )
@@ -56,7 +56,7 @@ class ListBlogByDate(Resource):
         con = sl.connect('sdn.db')
         con.row_factory = sqlite3.Row
         with con:
-            res = con.execute("SELECT id, title, author, created, likes, comments, link, id as blog_id FROM blog where created = ?", [(date)] )
+            res = con.execute("SELECT id, title, author, created, likes, comments, link, id as blog_id, wordcount FROM blog where created = ?", [(date)] )
             data = res.fetchall()
 
         return jsonify( [dict(ix) for ix in data] )
@@ -65,6 +65,14 @@ class MarkTagAsFavourite(Resource):
     def get(self, tag_id):
         con = sl.connect('sdn.db')
         sql = 'update tag set isFavourite = 1 where id = ?'
+
+        with con:
+            con.execute(sql, [tag_id])
+
+class UnMarkTagAsFavourite(Resource):
+    def get(self, tag_id):
+        con = sl.connect('sdn.db')
+        sql = 'update tag set isFavourite = 0 where id = ?'
 
         with con:
             con.execute(sql, [tag_id])
@@ -106,12 +114,40 @@ class ListCreate(Resource):
         with con:
             con.executemany(sql, [(title)] )
 
+class PurgeListContent(Resource):
+    def get(self, list_id):
+            con = sl.connect('sdn.db')
+            sql = 'delete from  blog2list  where list_id = ?'
+            with con:
+                con.executemany(sql, [(list_id)])
 class ListContent(Resource):
     def get(self, list_id):
         con = sl.connect('sdn.db')
         con.row_factory = sqlite3.Row
         with con:
-            res = con.execute("SELECT * FROM BlogsInList where list_id = ?", [list_id])
+            res = con.execute("SELECT * FROM BlogsInList where list_id = ? order by created desc", [list_id])
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
+
+
+
+class BlogSearch(Resource):
+    def get(self, search):
+        con = sl.connect('sdn.db')
+        con.row_factory = sqlite3.Row
+        with con:
+            res = con.execute("SELECT id, title, author, created, likes, comments, link, id as blog_id FROM blog where title like ? or id = ? order by created desc", [search, search])
+            data = res.fetchall()
+
+        return jsonify( [dict(ix) for ix in data] )
+
+class BlogByAuthor(Resource):
+    def get(self, author):
+        con = sl.connect('sdn.db')
+        con.row_factory = sqlite3.Row
+        with con:
+            res = con.execute("SELECT id, title, author, created, likes, comments, link, id as blog_id FROM blog where author = ? order by created desc", [author])
             data = res.fetchall()
 
         return jsonify( [dict(ix) for ix in data] )
@@ -158,6 +194,20 @@ class Tags(Resource):
 
         return jsonify( [dict(ix) for ix in data] )
 
+
+class Robinhood(Resource):
+    def get(self):
+        file_path = 'c:\\Users\\12062\\value.txt'  # Replace with the actual path to your file
+
+        try:
+            with open(file_path, 'r') as file:
+                file_content = file.read()
+        except FileNotFoundError:
+            print(f"Error: The file '{file_path}' was not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+        return file_content
 class Favorites(Resource):
     def get(self):
         con = sl.connect('sdn.db')
@@ -184,13 +234,18 @@ api.add_resource(ListBlogByDate,            '/blog/list/date/<date>')
 api.add_resource(ListBlogByTag,             '/blog/list/tag/<tag>')
 api.add_resource(ListCreate,                '/list/create/<title>')
 api.add_resource(ListContent,               '/list/<list_id>')
+api.add_resource(PurgeListContent,           '/list/purge/<list_id>')
 api.add_resource(Lists,                     '/list')
 api.add_resource(AddToList,                 '/list/add/<list_id>/<blog_id>')
 api.add_resource(RemoveFromList,             '/list/remove/<list_id>/<blog_id>')
 
 api.add_resource(BlogTags,                 '/blog/tags/<blog_id>')
 
+api.add_resource(BlogSearch,                 '/blog/search/<search>')
+api.add_resource(BlogByAuthor,                 '/blog/author/<author>')
 api.add_resource(MarkTagAsFavourite, '/tag/list/favourite/<tag_id>')
+api.add_resource(UnMarkTagAsFavourite, '/tag/list/favourite/remove/<tag_id>')
+
 api.add_resource(FavouriteTags, '/tag/list/favourite')
 
 api.add_resource(Tag, '/tag/<tag_id>')
@@ -200,6 +255,8 @@ api.add_resource(Read,             '/blog/read/<blog_id>')
 
 api.add_resource(Favorites,                 '/favorites')
 
+api.add_resource(Robinhood,                 '/robinhood')
+
 #api.add_resource(Tags,                      '/tags')
 
 # api.add_resource(AddToList,  '/list/add/<list_id>/<blog_id>')
@@ -207,7 +264,10 @@ api.add_resource(Favorites,                 '/favorites')
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True, extra_files=extra_files)
+    app.run(host='10.18.52.68', port=5000, debug=False, extra_files=extra_files)
 
+    #app.run(host='10.247.131.42', port=5000, debug=False, extra_files=extra_files)
+
+    #app.run(host='10.18.56.134', port=5000, debug=False, extra_files=extra_files)
 
 # http://127.0.0.1:5000//blog/created/count/February%201%252023

@@ -60,7 +60,11 @@
 		"models": {
 		},
 		"resources": {
-
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
 		},
 		"config" : {
 			"fullWidth"  : true
@@ -84,6 +88,17 @@
 						"list"
 					]
 				},
+
+				{
+					"name": "byauthor",
+					"pattern": "author/{author}",
+					"greedy": false,
+					"target": [
+						"calendar",
+						"list"
+					]
+				},
+
 				{
 					"name": "bytag",
 					"pattern": "tag/{tag}",
@@ -110,8 +125,16 @@
 						"calendar",
 						"list"
 					]
+				},
+				{
+					"name": "search",
+					"pattern": "search/{search}",
+					"greedy": false,
+					"target": [
+						"calendar",
+						"list"
+					]
 				}
-
 
 			],
 			"targets": {

@@ -4,19 +4,31 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/ui
 
 	var CalendarType = coreLibrary.CalendarType;
 
-    var controller;
+    var controller,me;
+
+    const chartFormat = DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: CalendarType.Gregorian});
+    const titleFormat = DateFormat.getInstance({pattern: "MMMM yyyy", calendarType: CalendarType.Gregorian});
 
 	return Controller.extend("com.makra.sdnblog.controller.Overview", {
-		oFormatYyyymmdd: null,
-
 		onInit: function() {
-		    controller = this;
+		    controller = me = this;
 
-			this.datasapday = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
+            this.datasapday = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
             this.countByDate = DateFormat.getInstance({pattern: "yyyyMM%25", calendarType: CalendarType.Gregorian});
 
-            const oStateModel = new sap.ui.model.json.JSONModel();
-            controller.dataLoaded = oStateModel.loadData( "/blog/created/count/" + this.countByDate.format(new Date()) );
+            let navModelObject = {
+                CurrentMonth : new Date()
+            };
+
+            Object.defineProperty(navModelObject, "CurrentMonthTitle", {
+                get : function() {
+                    return titleFormat.format(this.CurrentMonth);
+                }
+            });
+
+            me.mainModel = new sap.ui.model.json.JSONModel( navModelObject );
+
+            me.getView().setModel( me.mainModel );
 
             const oListsModel = new sap.ui.model.json.JSONModel();
             oListsModel.loadData( "/list" ).then( function() {
@@ -36,46 +48,26 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/ui
 
             const oFavListsModel = new sap.ui.model.json.JSONModel();
             oFavListsModel.loadData( "/tag/list/favourite" ).then( function() {
-                const aList = oListsModel.getData(),
+                const aList = oFavListsModel.getData(),
                     listMap = {};
 
                 aList.forEach( function(listItem) {
-                    const list = listMap[listItem.list_id] || {};
-                    list[listItem.blog_id] = listItem;
-                    listMap[listItem.list_id] = list;
+                    listMap[listItem.id] = listItem;
                 } );
 
-                oListsModel.setProperty("/list", aList);
-                oListsModel.setProperty("/map", listMap);
+                oFavListsModel.setProperty("/map", listMap);
             } );
             controller.getOwnerComponent().setModel(oFavListsModel, "favLists");
 
+            me.cal = new CalHeatmap();
 
-            controller.dataLoaded.then( function() {
-                controller.byId("calendar").addDelegate( {
-                    onAfterRendering : function() {
-                        var data = oStateModel.getData();
-                        $(".sapUiCalItem").each(function(index, item) {
-                            var day =  $(item).attr("data-sap-day");
-
-                            if(!day)
-                                return;
-
-                            var found = data.find( function(row) {
-                                return row[1] === parseInt( day );
-                            } );
-
-                            if( found ) {
-                                $(item).children(".sapUiCalItemText").each(function(ii, iitem) {
-                                    $(iitem).append( "<span style='padding-left: 3px;font-size: xx-small;'>" + found[0] + "</span>" );
-                                });
-                            }
-                        } );
-                    }
-                } );
-
-                controller.byId("calendar").rerender();
+            me.cal.on('click', (event, timestamp, value) => {
+                controller.getRouter().navTo("bydate", {
+                    date : this.datasapday.format( new Date(timestamp + new Date().getTimezoneOffset()*60*1000 )  )
+                });
             });
+
+            controller.loadMonth(new Date());
 
  			this.getRouter()
  				.getRoute("home")
@@ -86,9 +78,92 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/ui
 				}, this);
 		},
 
+        navNext: function() {
+            let currentMonth = me.mainModel.getProperty("/CurrentMonth");
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+            currentMonth.setDate(1);
+            me.mainModel.setProperty("/CurrentMonth", currentMonth);
+
+            controller.loadMonth();
+
+            controller.getRouter().navTo("bydate", {
+                date : this.datasapday.format( currentMonth )
+            });
+
+        },
+
+        navPrev : function() {
+            let currentMonth = me.mainModel.getProperty("/CurrentMonth");
+            currentMonth.setDate(1);
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            me.mainModel.setProperty("/CurrentMonth", currentMonth);
+
+            controller.loadMonth();
+
+            controller.getRouter().navTo("bydate", {
+                date : this.datasapday.format( currentMonth )
+            });
+        },
+
+        loadMonth : async function () {
+            let date  = me.getView().getModel().getProperty("/CurrentMonth"),
+            response  = await fetch( "/blog/created/count/" + this.countByDate.format( date ) ),
+                data  = await response.json(),
+            chartData = data.map( item => {
+                return {
+                    date : chartFormat.format(controller.datasapday.parse( item[1] ) ),
+                    value :  item[0]
+                }
+            } );
+
+            me.cal.paint(
+                {
+                    data: {
+                        source: chartData,
+                        x : 'date',
+                        y : d => +d['value'],
+                        defaultValue : 0
+                    },
+                    date: { start: date },
+                    range: 1,
+                    scale: {
+                        color: {
+                            type: 'linear',
+                            scheme: 'Blues',
+                            domain: [0, 50]
+                        }
+                    },
+                    domain: {
+                        type: 'month',
+                        padding: [10, 10, 10, 10],
+                        label: {offset : { x : -1000 }, position: 'top'},
+                    },
+                    subDomain: {type: 'xDay', radius: 2, width: 35, height: 35, label: 'D'}
+                },
+                [
+                    [
+                        Tooltip,
+                        {
+                            text: function (date, value, dayjsDate) {
+                                return value;
+                            },
+                        },
+                    ],
+                ]
+            );
+
+
+        },
+
+        onSearch : function(oEvent) {
+            this.getRouter().navTo("search", {
+                search : oEvent.getParameter("value")
+            });
+        },
+
         onNavByTag : function(oEvent) {
             this.getRouter().navTo("bytag", {
-                tag: oEvent.getSource().getContextBinding("favLists").getObject().id
+                tag: oEvent.getSource().getBindingContext("favLists").getObject().id
             });
         },
 
@@ -114,6 +189,15 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/ui
 
         getRouter: function() {
             return this.getOwnerComponent().getRouter();
+        },
+
+        onPurgeList: function(oEvent) {
+            fetch("/list/purge/2");
+        },
+
+        __ : function()
+        {
+           fetch("/blog/created/count/" + me.countByDate.format( new Date() ) ).then();
         }
 	});
 });
