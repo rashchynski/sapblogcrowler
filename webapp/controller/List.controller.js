@@ -181,6 +181,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/ui
                 var bindingCtx = oEvent.getSource().getBindingContext("blogs");
 
                 let blogId = bindingCtx.getObject().blog_id,
+                    userId = bindingCtx.getObject().author,
                     listMap = me.ListsModel.getProperty(`/map/${listId}`) || {},
                     action = "";
 
@@ -195,7 +196,11 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/ui
                 me.ListsModel.setProperty(`/map/${listId}`, listMap);
                 controller.getOwnerComponent().getModel("blogs").checkUpdate(true);
 
-                fetch(`/list/${action}/${listId}/${blogId}`);
+                if(action === "add" && userId) {
+                    fetch(`/list/${action}/${listId}/${blogId}/${encodeURIComponent(userId)}`);
+                } else {
+                    fetch(`/list/${action}/${listId}/${blogId}`);
+                }
             },
 
 

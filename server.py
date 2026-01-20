@@ -171,11 +171,16 @@ class Read(Resource):
             con.executemany(sql, [(blog_id)] )
 
 class AddToList(Resource):
-    def get(self, list_id, blog_id):
+    def get(self, list_id, blog_id, user_id=None):
         con = sl.connect('sdn.db')
-        sql = 'INSERT INTO blog2list (list_id, blog_id) values(?, ?)'
-        with con:
-            con.executemany(sql, [(list_id, blog_id)] )
+        if user_id:
+            sql = 'INSERT INTO blog2list (list_id, blog_id, user_id) values(?, ?, ?)'
+            with con:
+                con.executemany(sql, [(list_id, blog_id, user_id)] )
+        else:
+            sql = 'INSERT INTO blog2list (list_id, blog_id) values(?, ?)'
+            with con:
+                con.executemany(sql, [(list_id, blog_id)] )
 
 class RemoveFromList(Resource):
     def get(self, list_id, blog_id):
@@ -236,7 +241,7 @@ api.add_resource(ListCreate,                '/list/create/<title>')
 api.add_resource(ListContent,               '/list/<list_id>')
 api.add_resource(PurgeListContent,           '/list/purge/<list_id>')
 api.add_resource(Lists,                     '/list')
-api.add_resource(AddToList,                 '/list/add/<list_id>/<blog_id>')
+api.add_resource(AddToList,                 '/list/add/<list_id>/<blog_id>', '/list/add/<list_id>/<blog_id>/<user_id>')
 api.add_resource(RemoveFromList,             '/list/remove/<list_id>/<blog_id>')
 
 api.add_resource(BlogTags,                 '/blog/tags/<blog_id>')
