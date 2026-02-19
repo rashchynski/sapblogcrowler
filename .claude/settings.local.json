@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:community.sap.com)",
+      "Bash(python:*)",
+      "Bash(py -3 -c:*)",
+      "Bash(pip3 list:*)",
+      "Bash(py -0)",
+      "Bash(py -3.11 -c:*)",
+      "Bash(curl:*)",
+      "Bash(c:\\\\Users\\\\12062\\\\PycharmProjects\\\\sapblogcrowler\\\\venv\\\\Scripts\\\\pip.exe list:*)",
+      "Bash(\"c:\\\\Users\\\\12062\\\\PycharmProjects\\\\sapblogcrowler\\\\venv\\\\Scripts\\\\python.exe\" -c \"import selenium; print\\(''ok''\\)\")",
+      "Bash(\"c:\\\\Users\\\\12062\\\\PycharmProjects\\\\sapblogcrowler\\\\venv\\\\Scripts\\\\python.exe\" -c:*)",
+      "Bash(\"c:\\\\Users\\\\12062\\\\PycharmProjects\\\\sapblogcrowler\\\\venv\\\\Scripts\\\\python.exe\" \"c:\\\\Users\\\\12062\\\\PycharmProjects\\\\sapblogcrowler\\\\mainNew.py\")",
+      "Bash(sqlite3:*)",
+      "Bash(pip install:*)",
+      "Bash(venvScriptspip install selenium)",
+      "Bash(\"venv/Scripts/pip.exe\" install selenium)",
+      "Bash(\"venv/Scripts/python.exe\" -c:*)",
+      "Bash(\"venv/Scripts/python.exe\":*)",
+      "Bash(\"venv/Scripts/python.exe\" -m pip install selenium)",
+      "Bash(\"venv/Scripts/python.exe\" -m pip install undetected-chromedriver)",
+      "Bash(\"venv/Scripts/python.exe\" -c \"\nimport requests\n\nurl = ''https://community.sap.com/api/2.0/search''\nquery = \"\"SELECT id,subject,view_href,post_time,author.login,labels.text\\(*\\) FROM messages WHERE conversation.style=''blog'' AND depth=0 ORDER BY post_time DESC LIMIT 3\"\"\n\nresp = requests.get\\(url, params={''q'': query}, timeout=15\\)\nimport json\ndata = resp.json\\(\\)\nprint\\(json.dumps\\(data, indent=2\\)[:3000]\\)\n\")",
+      "Bash(\"venv/Scripts/python.exe\" -c \"\nimport requests, json\n\nurl = ''https://community.sap.com/api/2.0/search''\n\n# Execute the nested label query\nquery = \"\"SELECT * FROM labels WHERE messages.id = ''14325739''\"\"\nresp = requests.get\\(url, params={''q'': query}, timeout=15\\)\ndata = resp.json\\(\\)\nprint\\(''Labels for 14325739:'', json.dumps\\(data, indent=2\\)[:2000]\\)\n\")",
+      "Bash(\"venv/Scripts/python.exe\" mainNew.py)",
+      "Bash(\"venv/Scripts/python.exe\" -c \"\nimport requests, json\n\nAPI_URL = ''https://community.sap.com/api/2.0/search''\n\n# Try tags on a known message\nquery = \"\"SELECT * FROM tags WHERE messages.id = ''14325739''\"\"\nresp = requests.get\\(API_URL, params={''q'': query}, timeout=15\\)\nprint\\(''tags query:'', json.dumps\\(resp.json\\(\\), indent=2\\)[:2000]\\)\n\")",
+      "Bash(\"venv/Scripts/python.exe\" -c \"\nimport requests, json\n\n# Try the direct REST endpoint for tags\nresp = requests.get\\(''https://community.sap.com/api/2.0/messages/14325739/tags'', timeout=15\\)\nprint\\(''Direct tags:'', json.dumps\\(resp.json\\(\\), indent=2\\)[:2000]\\)\nprint\\(\\)\n\n# Try custom_tags or managed_tags\nresp2 = requests.get\\(''https://community.sap.com/api/2.0/messages/14325739'', timeout=15\\)\ndata = resp2.json\\(\\)\n# Check all keys in the message object\nprint\\(''Message keys:'', list\\(data[''data''].keys\\(\\)\\)\\)\n\")",
+      "Bash(\"venv/Scripts/python.exe\" -c \"\nimport requests, json\n\nAPI_URL = ''https://community.sap.com/api/2.0/search''\n\n# Execute the nested custom_tags query\nquery = \"\"SELECT * FROM custom_tags WHERE messages.id = ''14325739''\"\"\nresp = requests.get\\(API_URL, params={''q'': query}, timeout=15\\)\nprint\\(''custom_tags:'', json.dumps\\(resp.json\\(\\), indent=2\\)[:2000]\\)\n\")",
+      "Bash(\"venv/Scripts/python.exe\" -c \"\nimport requests, json\n\nAPI_URL = ''https://community.sap.com/api/2.0/search''\n\n# Try querying with various custom field names\nfor field in [''associated_products'', ''products'', ''managed_tags'', ''sap_tags'', ''custom_fields'']:\n    query = f\"\"SELECT id,{field} FROM messages WHERE id=''14323336''\"\"\n    resp = requests.get\\(API_URL, params={''q'': query}, timeout=15\\)\n    data = resp.json\\(\\)\n    if data.get\\(''status''\\) == ''success'':\n        print\\(f''{field}: SUCCESS -'', json.dumps\\(data[''data''][''items''][0] if data[''data''][''items''] else {}, indent=2\\)[:300]\\)\n    else:\n        print\\(f''{field}: {data.get\\(\"\"message\"\", \"\"error\"\"\\)}''\\)\n\")",
+      "Bash(\"venv/Scripts/python.exe\" -c \"\nimport requests, json\n\nAPI_URL = ''https://community.sap.com/api/2.0/search''\n\n# Try various relationship tables\nfor table in [''message_products'', ''product_associations'', ''product_messages'', ''message_product_associations'']:\n    query = f\"\"SELECT * FROM {table} LIMIT 1\"\"\n    resp = requests.get\\(API_URL, params={''q'': query}, timeout=15\\)\n    data = resp.json\\(\\)\n    print\\(f''{table}: {data.get\\(\"\"status\"\"\\)} - {data.get\\(\"\"message\"\", \"\"\"\"\\)[:60]}''\\)\n\nprint\\(\\)\n\n# Try product field on conversations/topics\nquery2 = \"\"SELECT id,subject,conversation FROM messages WHERE id=''14299842''\"\"\nresp2 = requests.get\\(API_URL, params={''q'': query2}, timeout=15\\)\ndata2 = resp2.json\\(\\)\nprint\\(''conversation field:'', json.dumps\\(data2, indent=2\\)[:500]\\)\n\n# Try the conversation/topic endpoint for products\nresp3 = requests.get\\(''https://community.sap.com/api/2.0/conversations/14299842/products'', timeout=15\\)\nprint\\(\\)\nprint\\(''conversation products:'', resp3.status_code, resp3.text[:200]\\)\n\")",
+      "Bash(pip show:*)"
+    ]
+  }
+}

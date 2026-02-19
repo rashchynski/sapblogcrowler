@@ -1,9 +1,13 @@
-import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import sqlite3 as sl
-import threading
 import re
 from datetime import datetime
+import time
 
 def get_text(a):
     return a.get_text()
@@ -43,15 +47,38 @@ def check_date_format(date_string, format_string):
     except ValueError:
         return False
 
+chrome_options = Options()
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
+chrome_options.add_experimental_option('useAutomationExtension', False)
+
+driver = webdriver.Chrome(options=chrome_options)
+driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
+    'source': 'Object.defineProperty(navigator, "webdriver", {get: () => undefined})'
+})
+
+# Initial load to solve WAF challenge
+driver.get('https://community.sap.com/')
+time.sleep(8)
+
 def load_page(count):
+    url = 'https://community.sap.com/t5/forums/searchpage/tab/message?filter=includeBlogs&q=%22a%22&page=' + str(count) + '&sort_by=-topicPostDate&collapse_discussion=true&include_blogs=true'
     try:
-        page = requests.get('https://community.sap.com/t5/forums/searchpage/tab/message?filter=includeBlogs&q=%22a%22&page='  + str(count) +  '&sort_by=-topicPostDate&collapse_discussion=true&include_blogs=true')
-    except requests.exceptions.RequestException as e:  # This is the correct syntax
+        driver.get(url)
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'lia-quilt-message-search-item'))
+        )
+        page_source = driver.page_source
+    except Exception as e:
+        print(f'Page {count} failed: {e}')
         failed_pages.append(count)
         return
 
-    soup = BeautifulSoup(page.content, 'html.parser')
-    scripts_list = soup.find_all(class_="lia-message-view-wrapper")
+    soup = BeautifulSoup(page_source, 'html.parser')
+    scripts_list = soup.find_all(class_="lia-quilt lia-quilt-message-search-item lia-quilt-layout-list-item")
 
     statistic_loaded[count] = 0
     statistic_added[count] = 0
@@ -123,17 +150,12 @@ def load_page(count):
 
 
 count = 0
-limit = count + 50
-threads = []
+limit = count + 20
 
 while count < limit:
     count = count + 1
-    t1 = threading.Thread(target=load_page, args=(count,))
-    t1.start()
-    threads.append(t1)
-
-for thread in threads:
-    thread.join()
+    print(f'Loading page {count}...')
+    load_page(count)
 
 print(insert_data)
 with con:
@@ -162,3 +184,5 @@ with con:
 
 
 print(missing_tags)
+
+driver.quit()

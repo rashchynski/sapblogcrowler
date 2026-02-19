@@ -264,7 +264,7 @@ api.add_resource(Robinhood,                 '/robinhood')
 
 
 if __name__ == '__main__':
-    app.run(host='192.168.86.32', port=5000, debug=False, extra_files=extra_files)
+    app.run(host='192.168.137.1', port=5000, debug=False, extra_files=extra_files)
 
     #app.run(host='10.247.131.42', port=5000, debug=False, extra_files=extra_files)
 
